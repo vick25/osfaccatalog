@@ -1,32 +1,68 @@
-import React, { useState } from 'react';
-import { Button } from 'primereact/button';
-import { Dialog } from 'primereact/dialog';
-
+import React, { useContext } from 'react';
+import { Button, Modal, Row, Col, Form } from 'react-bootstrap';
+//Context
+import StateContext from '../../contexts/StateContext';
+import { addCategory } from '../../services/CategoryService';
 
 const AddCategory = (props) => {
-  // const [visible, setVisible] = useState(false);
-  console.log(props);
-  const handleClose = () => {
-    props.handleClose();
+  const { setupdated, ...rest } = props;
+  const GlobalState = useContext(StateContext);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    addCategory(e.target, GlobalState.userToken)
+      .then((result) => {
+        console.log(result);
+        alert(result);
+        props.setupdated(true);
+      },
+        (error) => {
+          console.log(error);
+          alert("Failed to Add Category");
+        })
+    props.onHide();
   }
 
   return (
     <>
-      <div className="card flex justify-content-center">
-        <Dialog header="Add category" visible={props.visible} onHide={handleClose}
-          style={{ width: '50vw' }} closable={false} draggable={false}>
-          <p className="m-0">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodoconsequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-          </p>
+      <Modal
+        {...rest}
+        backdrop="static"
+        keyboard={false}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter" centered>
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">Add Category</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Row>
+            <Col sm={6}>
+              <Form onSubmit={handleSubmit}>
+                <Form.Group className="mb-3" controlId="categoryTitle">
+                  <Form.Label>Title</Form.Label>
+                  <Form.Control type="text" name="categoryTitle" placeholder="Category title" required />
+                </Form.Group>
 
-          <div className='p-dialog-footer pb-0'>
-            <Button label="No" icon="pi pi-times" onClick={handleClose} className="p-button-text" />
-            <Button label="Yes" icon="pi pi-check" onClick={handleClose} autoFocus />
-          </div>
-        </Dialog>
-      </div>
+                <Form.Group className="mb-3" controlId="description">
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control as="textarea" rows={3} name="description" />
+                </Form.Group>
+
+                <Form.Group>
+                  <Button variant="primary" type="submit">
+                    Save changes
+                  </Button>
+                </Form.Group>
+              </Form>
+            </Col>
+          </Row>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={props.onHide}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   )
 }

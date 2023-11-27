@@ -7,7 +7,7 @@ import { InputText } from 'primereact/inputtext';
 import { Password } from "primereact/password";
 import { Typography } from '@mui/material';
 import { useNavigate } from "react-router-dom";
-import Axios from 'axios';
+import axios from 'axios';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -41,7 +41,7 @@ const Register = () => {
             setSendRequest(!sendRequest);
             console.log('data submitted', data);
 
-            data.username && show();
+            // data.username && show();
         } catch (err) {
             console.error("Form Error ==> ", err);
         }
@@ -55,17 +55,28 @@ const Register = () => {
 
     useEffect(() => {
         if (sendRequest) {
-            const source = Axios.CancelToken.source();
+            const source = axios.CancelToken.source();
 
             async function signUp() {
                 try {
-                    const response = await Axios.post(`http://127.0.0.1:8000/api/v1/dj-rest-auth/registration/`, dataValues,
+                    const response = await axios.post(`http://127.0.0.1:8000/api/v1/dj-rest-auth/registration/`, dataValues,
                         { cancelToken: source.token });
                     console.log(response);
+
+                    dataValues.username && show();
 
                     navigate('/');
                 } catch (error) {
                     console.log(error.response);
+                    console.log(`Error: ${error.response.status}. ${error.response.statusText} :
+                            ${error.response.data.password1}`);
+                    if (error.response.status === 400)
+                        toast.current.show({
+                            severity: 'error',
+                            summary: `Error: POST ${error.response.status}`,
+                            detail: `(${error.response.statusText}) : ${error.response.data.password1}`,
+                            life: 3000
+                        });
                 }
             }
 
@@ -170,4 +181,4 @@ const Register = () => {
     )
 }
 
-export default Register
+export default Register;

@@ -1,19 +1,53 @@
+.container-fluid {
+  background-color: #f7f9fc;
+}
+
 .thematic {
-  margin: 10px;
+  margin-bottom: 10px;
   width: 100%;
+  font-weight: bold;
+}
+
+footer > * {
+  margin: 0;
+  /* bottom: -90px; */
 }
 
 .project {
   display: flex;
   justify-content: space-between;
-  margin: 10px 0;
-  height: 45px;
+  background: rgb(247, 247, 247);
+  padding: 5px;
+  border-radius: 5px;
+  border-bottom: rgb(10, 10, 10) solid 3px;
+  margin-bottom: 10px;
+  height: 3.5rem;
+}
+
+.container {
+  height: l00vh;
+}
+
+.details-card-container:hover {
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12), 0 10px 10px rgba(0, 0, 0, 0.26);
+  font-weight: bold;
+  /* filter: grayscale(0%); */
+  transform: scale(1.02);
+}
+
+.card—text {
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 3;
 }
 
 .projectFooter {
   display: flex;
+  padding: 0;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
   flex-wrap: nowrap;
 }
 
@@ -48,4 +82,89 @@
 .font-error {
   color: red;
   font-size: 0.75rem;
+}
+
+.form-label {
+  font-weight: 500;
+}
+
+.alignMidddle {
+  position: relative;
+  top: 50%;
+  margin-top: -30px;
+}
+
+.sidebar {
+  display: flex;
+  min-height: 100vh;
+  float: left;
+  margin-right: 5px;
+  overflow: "scroll initial";
+}
+
+.side-container {
+  padding-top: 30px;
+}
+
+.side-row {
+  padding: 30px;
+}
+
+.react-bootstrap-table thead {
+  position: sticky;
+  top: 0;
+  background-color: #333;
+  z-index: 1021;
+  color: white;
+}
+
+.buttons-table {
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: center;
+}
+
+.details {
+  border-radius: 5% 5% 0 0;
+  background-color: #fff;
+}
+
+.details-preview {
+  position: relative;
+  /* width: 70%; */
+  height: 150px;
+  /* border: 1px #333 solid; */
+  padding: 5px;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px #dcd4d4 solid;
+  overflow: hidden;
+}
+
+.details-preview-more {
+  text-align: left;
+}
+
+.details-preview-more ul {
+  text-decoration: none;
+  list-style: none;
+  padding-left: 0;
+}
+
+.details-preview-more span {
+  display: block;
+}
+
+.p-card:hover {
+  /* background: darkblue; */
+  outline: none;
+}
+
+.green-600 {
+  background: #c3efc3 !important;
+  border-radius: 3px;
+}
+
+.p-menuitem-link:hover {
+  background-color: #0cc !important;
 }

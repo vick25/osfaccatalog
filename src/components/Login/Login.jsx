@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect, useContext } from 'react';
+import apiClient from '../../utils/http-common';
 import { useNavigate } from "react-router-dom";
 import { Controller, useForm } from 'react-hook-form';
 import { Button } from 'primereact/button';
@@ -8,13 +9,13 @@ import { InputText } from 'primereact/inputtext';
 import { Password } from "primereact/password";
 import { Typography } from '@mui/material';
 
-import Axios from 'axios';
-
 //Contexts
 import DispatchContext from '../../contexts/DispatchContext';
 
 const Login = () => {
     const GlobalDispatch = useContext(DispatchContext);
+
+    document.querySelector("title").innerHTML = "Sign In | OSFAC Project Management";
 
     const navigate = useNavigate();
     const toast = useRef(null);
@@ -85,17 +86,16 @@ const Login = () => {
     //Get user info
     useEffect(() => {
         if (tokenValue !== "") {
-            const source = Axios.CancelToken.source();
+            const source = apiClient.CancelToken.source();
 
             async function getUserInfo() {
                 try {
-                    const response = await Axios.get(`http://127.0.0.1:8000/api/v1/dj-rest-auth/user/`,
-                        {
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': 'Token '.concat(tokenValue)
-                            }
-                        },
+                    const response = await apiClient.get(`dj-rest-auth/user/`, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Token '.concat(tokenValue)
+                        }
+                    },
                         { cancelToken: source.token });
                     console.log('User infos:', response);
 
@@ -122,11 +122,11 @@ const Login = () => {
     //sign In
     useEffect(() => {
         if (sendRequest) {
-            const source = Axios.CancelToken.source();
+            const source = apiClient.CancelToken.source();
 
-            async function signIn() {
+            const signIn = async () => {
                 try {
-                    const response = await Axios.post(`http://127.0.0.1:8000/api/v1/dj-rest-auth/login/`, dataValues,
+                    const response = await apiClient.post(`dj-rest-auth/login/`, dataValues,
                         { cancelToken: source.token });
 
                     console.log(response);
@@ -139,7 +139,7 @@ const Login = () => {
                 } catch (error) {
                     console.log(error.response);
                 }
-            }
+            };
 
             signIn();
             return () => {

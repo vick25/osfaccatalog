@@ -1,7 +1,11 @@
-import axios from 'axios';
+import apiClient from '../utils/http-common';
 
-export class UserService {
-    static getAllThematics() {
-        return axios.get(`http://localhost:8000/api/v1/thematics`);
-    }
+export async function getUsers(userToken) {
+    return await apiClient.get(`/users/`, {
+        headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
+            'Authorization': `Token ${userToken}`
+        }
+    })
+        .then(response => response.data);
 }

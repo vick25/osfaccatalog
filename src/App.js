@@ -1,7 +1,8 @@
-import React, { useReducer, useEffect } from "react";
+import React, { useReducer, useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import './App.css';
 import "./components/test/Test.css";
+import Spinner from "./components/Spinner/Spinner";
 
 // Components
 import Header from './components/Header/Header';
@@ -9,22 +10,32 @@ import Home from "./pages/Home/Home";
 import Login from "./components/Login/Login";
 import Footer from './components/Footer/Footer';
 import Register from "./components/Register/Register";
-import CreateProject from "./pages/Projects/CreateProject";
+import ManageProject from "./pages/Projects/ManageProject";
 import ProjectDetail from "./pages/Projects/ProjectDetail";
-import Listings from "./pages/Listings/Listings";
+import FileExplorer from "./pages/FileExplorer/FileExplorer";
+import CategorieList from "./pages/Category/CategorieList";
+import InstitutionList from "./pages/Institution/InstitutionList";
+import ThematicList from "./pages/Thematic/ThematicList";
+import ExecutantList from "./pages/Executant/ExecutantList";
 import Test from "./components/test/Test";
-
+import Test1 from "./components/test/Test1";
+// import DateDifference from "./components/test/DateDifference";
+import CardList from "./components/test/CardList";
 //Contexts
 import DispatchContext from "./contexts/DispatchContext";
 import StateContext from "./contexts/StateContext";
-// import { useState } from "react";
-// import axios from 'axios';
+import LoadingContext from "./contexts/LoadingContext";
 
-// const client = axios.create({
-//   baseURL: 'http://127.0.0.1:8000'
-// })
+import Files from "./components/test/Files";
+import Files1 from "./components/test/Files1";
+import Files2 from "./components/test/Files2";
+import Files3 from "./components/test/Files3";
+// import Files1 from "./components/test/Files1";
 
 const App = () => {
+  const [loading, setLoading] = useState(false);
+
+  //All initial state variables
   const initialState = {
     userFirstName: '',
     userLastName: '',
@@ -32,10 +43,13 @@ const App = () => {
     userEmail: localStorage.getItem('theUserEmail'),
     userId: localStorage.getItem('theUserId'),
     userToken: localStorage.getItem('theUserToken'),
-    userIsLoggedIn: localStorage.getItem('theUserUsername') ? true : false
+    userIsLoggedIn: localStorage.getItem('theUserUsername') ? true : false,
+    projectMoreDetails: {},
+    selectedThematics: [],
+    isSelectedThematics: false,
+    sort: "",
+    searchQuery: ""
   }
-
-  // const [myInitValues, setMyInitValues] = useState(initialState);
 
   function reducer(state, action) {
     switch (action.type) {
@@ -57,12 +71,51 @@ const App = () => {
           ...state,
           userIsLoggedIn: false
         }
+      case 'PROJECT_MORE_DETAILS':
+        return {
+          ...state,
+          projectMoreDetails: action.projectMoreDetails
+        }
+      case 'THEMATIC_PROJECTS':
+        return {
+          ...state,
+          selectedThematics: action.selectedThematics,
+          isSelectedThematics: action.isSelectedThematics
+        }
+      case 'NO_THEMATIC_PROJECTS':
+        return {
+          ...state,
+          isSelectedThematics: false
+        }
+      case "SORT_BY_NAME":
+        return {
+          ...state,
+          sort: action.payload
+        };
+      case "SEARCH":
+        return {
+          ...state,
+          searchQuery: action.payload
+        };
+      case "CLEAR_FILTERS":
+        return {
+          ...state,
+          sort: "",
+          searchQuery: ""
+        }
+      // case 'NO_THEMATIC_PROJECTS':
+      //   return {
+      //     ...state,
+      //     selectedThematics: [],
+      //     isSelectedThematics: action.isSelectedThematics
+      //   }
 
       default:
         return state;
     }
   }
 
+  // Global state and dispatch variables
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
@@ -77,23 +130,40 @@ const App = () => {
       localStorage.removeItem('theUserId');
       localStorage.removeItem('theUserToken');
     }
-  }, [state.userIsLoggedIn]);
+  }, [state.userIsLoggedIn]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  /* TODO: Global state contexts}
+     TODO: Global useReducer contexts} */
   return (
     <StateContext.Provider value={state}>
       <DispatchContext.Provider value={dispatch}>
         <Router>
           <Header />
-          <Routes>
-            <Route path='/' element={<Home />} />
-            <Route path='/login' element={<Login />} />
-            <Route path='/register' element={<Register />} />
-            <Route path='/listings' element={<Listings />} />
-            <Route path="/CreateProject" element={<CreateProject />} />
-            <Route path="/ProjectDetail" element={<ProjectDetail />} />
-            <Route path="/test" element={<Test />} />
-          </Routes>
-          <Footer />
+          {loading && <Spinner />}
+          <LoadingContext.Provider value={[loading, setLoading]}>
+            <Routes>
+              <Route path='/' element={<Home />} />
+              <Route path='/login' element={<Login />} />
+              <Route path='/register' element={<Register />} />
+              <Route path='/fileexplorer' element={<FileExplorer />} />
+              <Route path="/manageproject" element={<ManageProject />} />
+              <Route path="/projectdetail" element={<ProjectDetail />} />
+              <Route path="/categories" element={<CategorieList />} />
+              <Route path="/institutions" element={<InstitutionList />} />
+              <Route path="/thematics" element={<ThematicList />} />
+              <Route path="/executants" element={<ExecutantList />} />
+              <Route path="/test" element={<Test />} />
+              <Route path="/test1" element={<Test1 />} />
+              {/* <Route path="/dd" element={<DateDifference />} /> */}
+              <Route path="/cardlist" element={<CardList />} />
+              <Route path="/files" element={<Files />} />
+              <Route path="/files1" element={<Files1 />} />
+              <Route path="/files2" element={<Files2 />} />
+              <Route path="/files3" element={<Files3 />} />
+              {/* <Route path="*" component={Error404/>}/> */}
+            </Routes>
+            <Footer />
+          </LoadingContext.Provider>
         </Router>
       </DispatchContext.Provider>
     </StateContext.Provider>

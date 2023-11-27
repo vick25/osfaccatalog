@@ -2,13 +2,14 @@ import React from 'react';
 import { Container, Typography, Box, Link } from '@mui/material';
 
 function Copyright() {
+    const today = new Date();
     return (
         <Typography variant="body2" color="text.secondary" align="center">
             {'Copyright © '}
             <Link color="inherit" href="https://osfac.net/fr/">
                 OSFAC Catalog
-            </Link>{' '}
-            {new Date().getFullYear()}.
+            </Link>{' '} 2022-
+            {today.getFullYear()}.
         </Typography>
     );
 }
@@ -16,14 +17,13 @@ function Copyright() {
 
 function Footer() {
     return (
-        <Container maxWidth="sm">
-            <Box sx={{ my: 4 }}>
-                {/* <Typography variant="h6" component="h6" gutterBottom>
-                    Create React App example with styled-components
-                </Typography> */}
-                <Copyright />
-            </Box>
-        </Container>
+        <footer>
+            <Container maxWidth="sm">
+                <Box sx={{ my: 3 }} style={{ 'marginBottom': 0 }}>
+                    <Copyright />
+                </Box>
+            </Container>
+        </footer>
     )
 }
 

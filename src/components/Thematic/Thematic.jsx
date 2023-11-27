@@ -1,66 +1,67 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { ListBox } from 'primereact/listbox';
-import { ProgressBar } from 'primereact/progressbar';
-// import { Card } from 'primereact/card';
-import Axios from "axios";
+import { getThematics } from '../../services/ThematicService';
+import DispatchContext from '../../contexts/DispatchContext';
 
-//Contexts
-import StateContext from '../../contexts/StateContext';
-
-// import { UserService } from '../../services/UserService';
-// import UseFetch from '../../services/UseFetch';
-
-const Thematic = () => {
-    const GlobalState = useContext(StateContext);
-
-    // const data = UseFetch(`http://localhost:8000/api/v1/thematics`);
-    const [selectedThematics, setSelectedThematics] = useState(null);
+const Thematic = (props) => {
+    const GlobalDispatch = useContext(DispatchContext);
+    const [selectedThematics, setSelectedThematics] = useState([]);
     const [thematics, setThematics] = useState([]);
-    const [dataIsLoading, setDataIsLoading] = useState(true);
+    const { isThematicUpdated } = props;
 
     useEffect(() => {
-        const source = Axios.CancelToken.source();
-        async function getAllThematics() {
+        let mounted = true;
+
+        const fetchThematics = async () => {
             try {
-                const response = await Axios.get(`http://localhost:8000/api/v1/thematics`,
-                    {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            // 'Authorization': `Token ${GlobalState.userToken}`
-                        }
-                    },
-                    { cancelToken: source.token });
-                // console.log(response.data);
-                setThematics(response.data);
-                setDataIsLoading(false);
-            } catch (error) {
-                console.log(error.response);
+                const result = await getThematics();
+                if (mounted) {
+                    setThematics(result);
+                }
+            } catch (err) {
+                if (!err.response)
+                    console.log(`Error: ${err.message}`);
+
+                console.log(err.response.data);
+                console.log(err.response.status);
+                console.log(err.response.headers);
+            } finally {
+                mounted = false;
             }
         }
-        //Get all thematics
-        getAllThematics();
-        return () => {
-            source.cancel();
-        }
-    }, []);
 
-    if (dataIsLoading) {
-        <ProgressBar mode="indeterminate" />
-    }
+        fetchThematics();
+    }, [isThematicUpdated]);
+
+    useEffect(() => {
+        if (selectedThematics.length > 0) {
+            GlobalDispatch({
+                type: 'THEMATIC_PROJECTS',
+                selectedThematics: selectedThematics,
+                isSelectedThematics: true
+            });
+        } else {
+            GlobalDispatch({
+                type: 'NO_THEMATIC_PROJECTS'
+            });
+        }
+    }, [selectedThematics])
 
     const thematicTemplate = (option) => {
         return (
             <div className="thematic-item">
-                <div>{option.thematicTitle}</div>
+                <div>
+                    {option.thematicTitle}&nbsp;
+                    <span title={`${option.projects} project(s) available`}>({option.projects})</span>
+                </div>
             </div>
         );
     }
 
     return (
-        <div>
-            <ListBox value={selectedThematics} options={thematics} onChange={(e) => setSelectedThematics(e.value)} multiple filter optionLabel="thematicTitle"
-                itemTemplate={thematicTemplate} listStyle={{ maxHeight: '250px' }} />
-        </div>
+        <>
+            <ListBox value={selectedThematics} options={thematics} onChange={(e) => setSelectedThematics(e.value)} multiple filter optionLabel="thematicTitle" itemTemplate={thematicTemplate} listStyle={{ maxHeight: '250px' }} />
+        </>
     )
 }
 
