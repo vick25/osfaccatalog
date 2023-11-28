@@ -161,8 +161,10 @@ footer > * {
 }
 
 .green-600 {
+  pointer-events: none;
   background: #c3efc3 !important;
   border-radius: 3px;
+  box-shadow: 0 0 0.5rem rgb(0 0 0 / 0.2);
 }
 
 .p-menuitem-link:hover {
